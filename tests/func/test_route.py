@@ -3,11 +3,13 @@ import pyosrm
 
 @pytest.fixture(autouse=True)
 def initialized_router_instance():
-    router = pyosrm.PyOSRM('data/monaco-latest.osrm', algorithm="CH")
-    yield router
+    router = pyosrm.PyOSRM('tests/data/monaco-latest.osrm', algorithm="CH")
+    return router
 
 @pytest.mark.parametrize('coords', [[[7.419758, 43.731142], [7.419505, 43.736825]]])
-def test_valid_route(coords):
+def test_valid_route(coords, initialized_router_instance):
+    router = initialized_router_instance
+
     result = router.route(coords)
 
     assert result.status == pyosrm.Status.Ok
