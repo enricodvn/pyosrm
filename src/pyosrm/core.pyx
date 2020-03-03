@@ -40,7 +40,7 @@ cdef class PyOSRM:
             coords = new osrm.Coordinate(lon[0], lat[0])
             params[0].coordinates.push_back(coords[0])
 
-        result = Result()
+        result = RouteResult()
 
         cdef osrm.Status status = self._thisptr[0].Route(params[0], result._thisptr[0])
 
@@ -53,7 +53,7 @@ cdef class PyOSRM:
         if self._thisptr != NULL:
             del self._thisptr
 
-cdef class Result:
+cdef class RouteResult:
     cdef:
         osrm.ResultT* _thisptr
         osrm.Status _status
