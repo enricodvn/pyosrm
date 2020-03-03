@@ -64,6 +64,82 @@ cdef class Result:
         cdef osrm._JsonObject *jsonResult = new osrm._JsonObject()
         self._thisptr = new osrm.ResultT(jsonResult[0])
 
+    def json(self):
+        cdef:
+            char* routes_k = "routes"
+            char* distance_k = "distance"
+            char* duration_k = "duration"
+            char* message_k = "message"
+            char* geometry_k = "geometry"
+            char* weight_name_k = "weight_name"
+            char* weight_k = "weight"
+            char* legs_k = "legs"
+            char* summary_k = "summary"
+            char* waypoints_k = "waypoints"
+            char* name_k = "name"
+            char* hint_k = "hint"
+            char* location_k = "location"
+            char* longitude_k = "longitude"
+
+        cdef osrm._JsonObject json_result = self._thisptr.get[osrm._JsonObject]()
+
+        cdef:
+            osrm._Array routes
+            osrm._JsonObject route
+            osrm._Array legs
+            osrm._JsonObject leg
+            osrm._Array waypoints
+            osrm._JsonObject waypoint
+
+        if self._status == osrm.Status.Error:
+            return {
+                "code": "Error",
+                "message": json_result.values[message_k].get[osrm._String]().value
+            }
+        else:
+            routes = json_result.values[routes_k].get[osrm._Array]()
+            parsed_routes  = []
+
+            for ii in range(routes.values.size()):
+                route = routes.values.at(ii).get[osrm._JsonObject]()
+
+                legs = route.values[legs_k].get[osrm._Array]()
+                parsed_legs = []
+                for jj in range(legs.values.size()):
+                    leg = legs.values.at(jj).get[osrm._JsonObject]()
+                    parsed_legs.append({
+                        "steps": [],
+                        "distance": leg.values[distance_k].get[osrm._Number]().value,
+                        "duration": leg.values[duration_k].get[osrm._Number]().value,
+                        "summary": leg.values[summary_k].get[osrm._String]().value.decode("UTF-8"),
+                    })
+
+
+                parsed_routes.append({
+                    "distance": route.values[distance_k].get[osrm._Number]().value,
+                    "duration": route.values[duration_k].get[osrm._Number]().value,
+                    "legs": parsed_legs,
+                    "geometry": route.values[geometry_k].get[osrm._String]().value.decode("UTF-8"),
+                    "weight_name": route.values[weight_name_k].get[osrm._String]().value.decode("UTF-8"),
+                    "weight": route.values[weight_k].get[osrm._Number]().value,
+                })
+
+            waypoints = json_result.values[routes_k].get[osrm._Array]()
+            parsed_waypoints = []
+
+            for ii in range(waypoints.values.size()):
+                waypoint = waypoints.values.at(ii).get[osrm._JsonObject]()
+                parsed_waypoints.append({
+                    "distance": waypoint.values[distance_k].get[osrm._Number]().value,
+                    "name": waypoint.values[name_k].get[osrm._String]().value.decode("UTF-8"),
+                    "hint": waypoint.values[hint_k].get[osrm._String]().value.decode("UTF-8"),
+                })
+
+            return {
+                "routes": parsed_routes,
+                "waypoints": parsed_waypoints
+            }
+
     cdef set_status(self, osrm.Status status):
         self._status = status
 

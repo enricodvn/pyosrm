@@ -122,6 +122,8 @@ cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
     double value
   struct _Array "osrm::util::json::Array":
     vector[Value] values
+  struct _String "osrm::util::json::String":
+    string value
 
 cdef extern from "engine/api/base_result.hpp" namespace "osrm::engine::api":
   cdef cppclass ResultT:
