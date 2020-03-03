@@ -23,12 +23,14 @@ cdef class PyOSRM:
         self._thisptr = new osrm.OSRM(self.engine_config)
 
 
-    def route(self, route_coords):
+    def route(self, route_coords, generate_hints=True):
         cdef:
              osrm.FloatLongitude* lon
              osrm.FloatLatitude* lat
              osrm.Coordinate* coords
              osrm.RouteParameters *params = new osrm.RouteParameters()
+
+        params[0].generate_hints = generate_hints
 
         for coord in route_coords:
             lon = new osrm.FloatLongitude()
