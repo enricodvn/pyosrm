@@ -104,7 +104,7 @@ cdef extern from "engine/api/base_parameters.hpp" namespace "osrm::engine::api":
     vector[optional[Approach]] approaches
     vector[string] exclude
     optional[OutputFormatType] format
-    bool generate_hits
+    bool generate_hints
     bool skip_waypoints
     SnappingType snapping
 
