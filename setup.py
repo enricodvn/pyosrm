@@ -1,6 +1,12 @@
 from setuptools import setup, Extension, find_packages
 from Cython.Build import cythonize
 
+# read the contents of your README file
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 ext = cythonize(
     [
         Extension(
@@ -8,7 +14,8 @@ ext = cythonize(
             sources=['**/*.pyx'],
             include_dirs=[
                 '/usr/local/include/osrm',
-                '/usr/include/boost'
+                '/usr/include/boost',
+                '/usr/local/include/boost'
             ],
             libraries=[
                 "osrm",
@@ -17,7 +24,6 @@ ext = cythonize(
                 "boost_iostreams",
                 "boost_thread",
             ],
-            library_dirs=["/usr/local/lib"],
             language='c++',
             extra_compile_args=["-std=c++14"],
             extra_link_args=["-lrt"]
@@ -33,9 +39,10 @@ setup(
     version='0.0.1',
     license='MIT',
     description='Cython wrapper of osrm-backend to be used in Python',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Enrico Davini',
     url='https://github.com/enricodvn/pyosrm',
-    packages=find_packages(where='src'),
-    package_dir={'': 'src'},
+    zip_safe=False,
     ext_modules=ext
 )
