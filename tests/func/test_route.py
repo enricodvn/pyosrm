@@ -78,3 +78,6 @@ class TestValidRoute:
             assert "location" in waypoint
             assert isinstance(waypoint["location"], list)
             assert len(waypoint["location"]) == 2
+
+    def test_code_in_result_dict(self, valid_result_dict):
+        assert "code" in valid_result_dict and valid_result_dict["code"] == "Ok"

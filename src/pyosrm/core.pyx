@@ -141,7 +141,8 @@ cdef class RouteResult:
 
             return {
                 "routes": parsed_routes,
-                "waypoints": parsed_waypoints
+                "waypoints": parsed_waypoints,
+                "code": "Ok" if self._status == osrm.Status.Ok else "Error"
             }
 
     cdef set_status(self, osrm.Status status):
