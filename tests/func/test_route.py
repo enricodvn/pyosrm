@@ -1,43 +1,80 @@
 import pytest
 import pyosrm
 
-@pytest.fixture(autouse=True)
-def initialized_router_instance():
-    router = pyosrm.PyOSRM('tests/data/monaco-latest.osrm', algorithm="CH")
-    return router
+valid_coords = ([[7.419758, 43.731142], [7.419505, 43.736825]], )
 
-@pytest.mark.parametrize('coords', [[[7.419758, 43.731142], [7.419505, 43.736825]]])
-def test_valid_route(coords, initialized_router_instance):
-    router = initialized_router_instance
+@pytest.fixture(params=valid_coords)
+def valid_route_result(request, initialized_router_instance):
+    return initialized_router_instance.route(request.param)
 
-    result = router.route(coords)
+@pytest.fixture()
+def valid_result_dict(valid_route_result):
+    return valid_route_result.json()
 
-    assert result.status == pyosrm.Status.Ok
+class TestValidRoute:
 
-    result_dict = result.json()
+    def test_route(self, valid_route_result):
+        assert valid_route_result.status == pyosrm.Status.Ok
 
-    assert "routes" in result_dict
+    def test_routes_in_result_dict(self, valid_result_dict):
+        assert "routes" in valid_result_dict
+        assert isinstance(valid_result_dict["routes"], list)
 
-    for route in result_dict["routes"]:
-        assert "duration" in route
-        assert "distance" in route
-        assert "legs" in route
-        assert "geometry" in route
-        assert "weight_name" in route
-        assert "weight" in route
+    def test_duraton_in_route_dicts(self, valid_result_dict):
+        for route in valid_result_dict["routes"]:
+            assert "duration" in route
+            assert isinstance(route["duration"], float)
 
-        for leg in route["legs"]:
-            assert "steps" in leg
-            assert "duration" in leg
-            assert "distance" in leg
-            assert "summary" in leg
+    def test_distance_in_route_dicts(self, valid_result_dict):
+        for route in valid_result_dict["routes"]:
+            assert "distance" in route
+            assert isinstance(route["distance"], float)
 
-    assert "waypoints" in result_dict
+    def test_legs_in_route_dicts(self, valid_result_dict):
+        for route in valid_result_dict["routes"]:
+            assert "legs" in route
+            for leg in route["legs"]:
+                assert "steps" in leg and isinstance(leg["steps"], list)
+                assert "duration" in leg and isinstance(leg["duration"], float)
+                assert "distance" in leg and isinstance(leg["distance"], float)
+                assert "summary" in leg and isinstance(leg["summary"], str)
 
-    for waypoint in result_dict["waypoints"]:
-        assert "hint" in waypoint
-        assert "distance" in waypoint
-        assert "location" in waypoint
-        assert "name" in waypoint
+    def test_geometry_in_route_dicts(self, valid_result_dict):
+        for route in valid_result_dict["routes"]:
+            assert "geometry" in route
+            assert isinstance(route["geometry"], str)
 
-    assert "code" in result_dict and result_dict["code"] == "Ok"
+    def test_weight_name_in_route_dicts(self, valid_result_dict):
+        for route in valid_result_dict["routes"]:
+            assert "weight_name" in route
+            assert isinstance(route["weight_name"], str)
+
+    def test_weight_in_route_dicts(self, valid_result_dict):
+        for route in valid_result_dict["routes"]:
+            assert "weight" in route
+            assert isinstance(route["weight"], float)
+
+    def test_waypoints_in_result_dict(self, valid_result_dict):
+            assert "waypoints" in valid_result_dict
+            assert isinstance(valid_result_dict["waypoints"], list)
+
+    def test_hint_in_waypoint_dicts(self, valid_result_dict):
+        for waypoint in valid_result_dict["waypoints"]:
+            assert "hint" in waypoint
+            assert isinstance(waypoint["hint"], str)
+
+    def test_name_in_waypoint_dicts(self, valid_result_dict):
+        for waypoint in valid_result_dict["waypoints"]:
+            assert "name" in waypoint
+            assert isinstance(waypoint["name"], str)
+
+    def test_distance_in_waypoint_dicts(self, valid_result_dict):
+        for waypoint in valid_result_dict["waypoints"]:
+            assert "distance" in waypoint
+            assert isinstance(waypoint["distance"], float)
+
+    def test_location_in_waypoint_dicts(self, valid_result_dict):
+        for waypoint in valid_result_dict["waypoints"]:
+            assert "location" in waypoint
+            assert isinstance(waypoint["location"], list)
+            assert len(waypoint["location"]) == 2
