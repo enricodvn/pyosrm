@@ -79,7 +79,6 @@ cdef class Result:
             char* name_k = "name"
             char* hint_k = "hint"
             char* location_k = "location"
-            char* longitude_k = "longitude"
 
         cdef osrm._JsonObject json_result = self._thisptr.get[osrm._JsonObject]()
 
@@ -90,6 +89,7 @@ cdef class Result:
             osrm._JsonObject leg
             osrm._Array waypoints
             osrm._JsonObject waypoint
+            osrm._Array location
 
         if self._status == osrm.Status.Error:
             return {
@@ -124,15 +124,17 @@ cdef class Result:
                     "weight": route.values[weight_k].get[osrm._Number]().value,
                 })
 
-            waypoints = json_result.values[routes_k].get[osrm._Array]()
+            waypoints = json_result.values[waypoints_k].get[osrm._Array]()
             parsed_waypoints = []
 
             for ii in range(waypoints.values.size()):
                 waypoint = waypoints.values.at(ii).get[osrm._JsonObject]()
+                location = waypoint.values[location_k].get[osrm._Array]()
                 parsed_waypoints.append({
                     "distance": waypoint.values[distance_k].get[osrm._Number]().value,
                     "name": waypoint.values[name_k].get[osrm._String]().value.decode("UTF-8"),
                     "hint": waypoint.values[hint_k].get[osrm._String]().value.decode("UTF-8"),
+                    "location": [location.values.at(0).get[osrm._Number]().value, location.values.at(1).get[osrm._Number]().value]
                 })
 
             return {
