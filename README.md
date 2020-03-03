@@ -33,7 +33,7 @@ import pyosrm
 router = posrm.PyOSRM("tests/data/ch/monaco-latest.osrm")
 ```
 ### Route
-To use the Route API, you just need to pass a list of coordinates pairs in format [lon, lat]. The easiest way to get the result is by using the RouteResult.json method, which formats the data in a easily serializable dictionary like the original API [result object](http://project-osrm.org/docs/v5.22.0/api/?language=cURL#result-objects).
+To use the Route API, you just need to pass a list of coordinate pairs in format [lon, lat]. The easiest way to get the result is by using the RouteResult.json method, which formats the data in a easily serializable dictionary like the original API [result object](http://project-osrm.org/docs/v5.22.0/api/?language=cURL#result-objects).
 ```
 from pyosrm import PyOSRM, Status
 router = PyOSRM("tests/data/ch/monaco-latest.osrm", algorithm='CH')
