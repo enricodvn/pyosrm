@@ -25,13 +25,19 @@ python setup.py build_ext --inplace
 ```
 
 ## Usage
-It is most likely you will need to install osrm-backend first to pre-process the data, since this package does not provide the cli tools to do it yet. Follow the instructions in the [project wiki](https://github.com/Project-OSRM/osrm-backend/wiki/Running-OSRM#quickstart) to pre-process the data using the desired algorithm (CH or MLD).
+If you installed pyosrm using pip, you don't need to have osrm-backend installed, but it is most likely you will it first to pre-process the data, since this package does not provide the cli tools to do it yet. Follow the instructions in the [project wiki](https://github.com/Project-OSRM/osrm-backend/wiki/Running-OSRM#quickstart) to pre-process the data using the desired algorithm (CH or MLD).
 
 To create a PyOSRM object, you need to pass the path to the pre-processed data, and the algorithm (default 'CH' or 'MLD').
 ```
 import pyosrm
 router = posrm.PyOSRM("tests/data/ch/monaco-latest.osrm")
 ```
+For large datasets, it may be required [a lot of RAM](https://github.com/Project-OSRM/osrm-backend/wiki/Disk-and-Memory-Requirements) to run osrm. For this reason, if you have more than one python process instanciating a PyOSRM object, it is recommended to use shared memory instead.
+```
+import pyosrm
+router = posrm.PyOSRM(use_shared_memory=True)
+```
+Refer to the [documentation](https://github.com/Project-OSRM/osrm-backend/wiki/Configuring-and-using-Shared-Memory) for more information about using shared memory with osrm.
 ### Route
 To use the Route API, you just need to pass a list of coordinate pairs in format [lon, lat]. The easiest way to get the result is by using the RouteResult.json method, which formats the data in a easily serializable dictionary like the original API [result object](http://project-osrm.org/docs/v5.22.0/api/?language=cURL#result-objects).
 ```
