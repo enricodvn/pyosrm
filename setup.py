@@ -36,7 +36,7 @@ ext = cythonize(
 
 setup(
     name='pyosrm',
-    version='0.0.1',
+    version='0.0.2',
     license='MIT',
     description='Cython wrapper of osrm-backend to be used in Python',
     long_description=long_description,
