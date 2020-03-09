@@ -1,18 +1,23 @@
 cimport osrm
 from enum import Enum
+import os
 
 cdef class PyOSRM:
     cdef:
          osrm.OSRM* _thisptr
 
-    def __cinit__(self, path, algorithm="CH", use_shared_memory=False):
-        encoded_path = path.encode("UTF-8")
+    def __cinit__(self, path="", algorithm="CH", use_shared_memory=False):
         cdef osrm.EngineConfig engine_config
-        cdef char* path_c = encoded_path
-        cdef osrm.StorageConfig *store_config = new osrm.StorageConfig(path_c)
-        engine_config.storage_config = store_config[0]
+        cdef char* path_c
+        cdef osrm.StorageConfig *store_config
+        if os.path.exists(path):
+            encoded_path = path.encode("UTF-8")
+            path_c = encoded_path
+            store_config = new osrm.StorageConfig(path_c)
+            engine_config.storage_config = store_config[0]
+        elif not use_shared_memory:
+            raise ValueError("You need either a valid path or use_shared_memory True")
         engine_config.use_shared_memory = use_shared_memory
-
         if algorithm=="CH":
             engine_config.algorithm = osrm.Algorithm.CH
         elif algorithm=="MLD":
