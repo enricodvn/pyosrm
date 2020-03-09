@@ -81,3 +81,17 @@ class TestValidRoute:
 
     def test_code_in_result_dict(self, valid_result_dict):
         assert "code" in valid_result_dict and valid_result_dict["code"] == "Ok"
+
+class TestRouteExceptions:
+
+    def test_invalid_path_initialization(self):
+        with pytest.raises(ValueError):
+            pyosrm.PyOSRM("")
+
+    def test_no_parameters_initialization(self):
+        with pytest.raises(ValueError):
+            pyosrm.PyOSRM()
+
+    def test_invalid_algorithm_parameter(self):
+        with pytest.raises(ValueError):
+            pyosrm.PyOSRM("/", algorithm="dijkstra")
