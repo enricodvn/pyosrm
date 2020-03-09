@@ -3,11 +3,11 @@ import pyosrm
 
 valid_coords = ([[7.419758, 43.731142], [7.419505, 43.736825]], )
 
-@pytest.fixture(params=valid_coords)
+@pytest.fixture(params=valid_coords, scope='class')
 def valid_route_result(request, initialized_router_instance):
     return initialized_router_instance.route(request.param)
 
-@pytest.fixture()
+@pytest.fixture(scope='class')
 def valid_result_dict(valid_route_result):
     return valid_route_result.json()
 
