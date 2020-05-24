@@ -12,9 +12,9 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 if sys.platform == "darwin":
     libs = [
             "osrm",
-            "boost_system",
-            "boost_filesystem",
-            "boost_iostreams",
+            "boost_system-mt",
+            "boost_filesystem-mt",
+            "boost_iostreams-mt",
             "boost_thread-mt",
         ]
     extra_link_args = []
