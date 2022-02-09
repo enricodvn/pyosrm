@@ -68,6 +68,7 @@ elif platform.system() == 'Linux':
         '/usr/include/boost',
         '/usr/local/include/boost'
     ]
+    library_dirs = [ '/usr/local/lib' ]
     libraries = [
         "osrm",
         "boost_system",
@@ -99,13 +100,13 @@ ext = cythonize(
 
 setup(
     name='pyosrm',
-    version='0.0.2',
+    version='0.0.3',
     license='MIT',
     description='Cython wrapper of osrm-backend to be used in Python',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author='Enrico Davini',
-    url='https://github.com/enricodvn/pyosrm',
+    author='Enrico Davini, Luca Di Gaspero',
+    url='https://github.com/liuq/pyosrm',
     zip_safe=False,
     ext_modules=ext
 )
