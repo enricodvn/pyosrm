@@ -106,11 +106,38 @@ cdef extern from "engine/api/base_parameters.hpp" namespace "osrm::engine::api":
         optional[OutputFormatType] format
         bool generate_hints
         bool skip_waypoints
-        SnappingType snapping
+        SnappingType snapping 
 
-cdef extern from "route_parameters.hpp" namespace "osrm":
-    cdef cppclass RouteParameters(BaseParameters):
-        pass
+cdef extern from "route_parameters.hpp" namespace "osrm::engine::api":
+    cdef enum AnnotationsType "osrm::engine::api::RouteParameters::AnnotationsType":
+            NoAnnotation "osrm::engine::api::RouteParameters::AnnotationsType::None"
+            Duration "osrm::engine::api::RouteParameters::AnnotationsType::Duration"
+            Nodes "osrm::engine::api::RouteParameters::AnnotationsType::Nodes"
+            Distance "osrm::engine::api::RouteParameters::AnnotationsType::Distance"
+            Weight "osrm::engine::api::RouteParameters::AnnotationsType::Weight"
+            Datasources "osrm::engine::api::RouteParameters::AnnotationsType::Datasources"
+            Speed "osrm::engine::api::RouteParameters::AnnotationsType::Speed"
+            All "osrm::engine::api::RouteParameters::AnnotationsType::All"
+
+    cdef enum GeometriesType "osrm::engine::api::RouteParameters::GeometriesType":
+        Polyline "osrm::engine::api::RouteParameters::GeometriesType::Polyline"
+        Polyline6 "osrm::engine::api::RouteParameters::GeometriesType::Polyline6"
+        GeoJSON "osrm::engine::api::RouteParameters::GeometriesType::GeoJSON"
+
+    cdef enum OverviewType "osrm::engine::api::RouteParameters::OverviewType":
+        Simplified "osrm::engine::api::RouteParameters::OverviewType::Simplified"
+        Full "osrm::engine::api::RouteParameters::OverviewType::Full"
+        NoOverview "osrm::engine::api::RouteParameters::OverviewType::False"    
+
+    cdef cppclass RouteParameters(BaseParameters):    
+        bool steps
+        bool alternatives
+        bool annotations
+        AnnotationsType annotations_type
+        GeometriesType geometries
+        OverviewType overview
+
+    
 
 cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
     cdef cppclass Value:

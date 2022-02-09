@@ -1,6 +1,7 @@
 cimport osrm
 from enum import Enum
 import os
+from collections.abc import Iterable
 
 cdef class PyOSRM:
     cdef:
@@ -28,7 +29,7 @@ cdef class PyOSRM:
         self._thisptr = new osrm.OSRM(engine_config)
 
 
-    def route(self, route_coords, generate_hints=True):
+    def route(self, route_coords, generate_hints=True, steps=True, annotations=[]):
         cdef:
              osrm.FloatLongitude* lon
              osrm.FloatLatitude* lat
@@ -36,6 +37,36 @@ cdef class PyOSRM:
              osrm.RouteParameters *params = new osrm.RouteParameters()
 
         params[0].generate_hints = generate_hints
+        params[0].steps = steps
+        if annotations:
+            params[0].annotations = True
+            if not isinstance(annotations, str) and isinstance(annotations, Iterable):
+                for annotation in annotations:
+                    if annotation == "speed":
+                        params[0].annotations_type = <osrm.AnnotationsType>(<unsigned int>params[0].annotations_type | <unsigned int>osrm.AnnotationsType.Speed)
+                    elif annotation == "duration":
+                        params[0].annotations_type = <osrm.AnnotationsType>(<unsigned int>params[0].annotations_type | <unsigned int>osrm.AnnotationsType.Duration)
+                    elif annotation == "nodes":
+                        params[0].annotations_type = <osrm.AnnotationsType>(<unsigned int>params[0].annotations_type | <unsigned int>osrm.AnnotationsType.Nodes)
+                    elif annotation == "distance":
+                        params[0].annotations_type = <osrm.AnnotationsType>(<unsigned int>params[0].annotations_type | <unsigned int>osrm.AnnotationsType.Distance)
+                    elif annotation == "weight":
+                        params[0].annotations_type = <osrm.AnnotationsType>(<unsigned int>params[0].annotations_type | <unsigned int>osrm.AnnotationsType.Weight)
+                    elif annotation == "datasources":
+                        params[0].annotations_type = <osrm.AnnotationsType>(<unsigned int>params[0].annotations_type | <unsigned int>osrm.AnnotationsType.Datasources)
+                    elif annotation == "all":
+                        params[0].annotations_type = <osrm.AnnotationsType>(<unsigned int>params[0].annotations_type | <unsigned int>osrm.AnnotationsType.All)
+                    elif annotation == "none":
+                        pass
+                    else:
+                        raise ValueError(f"Annotation {annotation} not recognized")
+            else:
+                if annotations == "all":
+                    params[0].annotations_type = osrm.AnnotationsType.All
+                elif annotations == "none":
+                    params[0].annotations_type = osrm.AnnotationsType.NoAnnotation
+                else:
+                    raise ValueError(f"Annotation {annotations} not recognized")
 
         for coord in route_coords:
             lon = new osrm.FloatLongitude()
@@ -86,6 +117,10 @@ cdef class RouteResult:
             char* name_k = "name"
             char* hint_k = "hint"
             char* location_k = "location"
+            char* annotation_k = "annotation"
+            char* speed_k = "speed"
+            char* datasources_k = "datasources"
+            char* nodes_k = "nodes"
 
         cdef osrm._JsonObject json_result = self._thisptr.get[osrm._JsonObject]()
 
@@ -97,6 +132,8 @@ cdef class RouteResult:
             osrm._Array waypoints
             osrm._JsonObject waypoint
             osrm._Array location
+            osrm._JsonObject annotation
+            osrm._Array annotations
 
         if self._status == osrm.Status.Error:
             return {
@@ -114,11 +151,31 @@ cdef class RouteResult:
                 parsed_legs = []
                 for jj in range(legs.values.size()):
                     leg = legs.values.at(jj).get[osrm._JsonObject]()
+                    _annotation = {}
+                    if leg.values.find(annotation_k) != leg.values.end():
+                        annotation = leg.values[annotation_k].get[osrm._JsonObject]()
+                        if annotation.values.find(speed_k) != annotation.values.end():
+                            annotations = annotation.values[speed_k].get[osrm._Array]()
+                            _annotation['speed'] = [annotations.values.at(i).get[osrm._Number]().value for i in range(annotations.values.size())]
+                        if annotation.values.find(duration_k) != annotation.values.end():                            
+                            annotations = annotation.values[duration_k].get[osrm._Array]()
+                            _annotation['duration'] = [annotations.values.at(i).get[osrm._Number]().value for i in range(annotations.values.size())]
+                        if annotation.values.find(weight_k) != annotation.values.end():
+                            annotations = annotation.values[weight_k].get[osrm._Array]()
+                            _annotation['weight'] = [annotations.values.at(i).get[osrm._Number]().value for i in range(annotations.values.size())]
+                        if annotation.values.find(datasources_k) != annotation.values.end():
+                            annotations = annotation.values[datasources_k].get[osrm._Array]()
+                            _annotation['datasources'] = [<unsigned int>annotations.values.at(i).get[osrm._Number]().value for i in range(annotations.values.size())]
+                        if annotation.values.find(nodes_k) != annotation.values.end():
+                            annotations = annotation.values[nodes_k].get[osrm._Array]()
+                            _annotation['nodes'] = [<unsigned int>annotations.values.at(i).get[osrm._Number]().value for i in range(annotations.values.size())]
+                        
                     parsed_legs.append({
                         "steps": [],
                         "distance": leg.values[distance_k].get[osrm._Number]().value,
                         "duration": leg.values[duration_k].get[osrm._Number]().value,
                         "summary": leg.values[summary_k].get[osrm._String]().value.decode("UTF-8"),
+                        "annotation": _annotation
                     })
 
 
