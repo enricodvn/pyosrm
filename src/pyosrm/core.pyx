@@ -2,8 +2,7 @@ cimport osrm
 from enum import Enum
 import os
 from collections.abc import Iterable
-
-
+import datetime as dt
 
 cdef class PyOSRM:
     cdef:
@@ -109,7 +108,7 @@ cdef class PyOSRM:
 
         return result
 
-    def table(self, route_coords, source_indexes=[], destination_indexes=[], annotations=[]):
+    def table(self, route_coords, source_indexes=[], destination_indexes=[], annotations=[], to_timedelta=False):
         cdef:
              osrm.FloatLongitude* lon
              osrm.FloatLatitude* lat
@@ -181,7 +180,7 @@ cdef class RouteResult:
         cdef osrm._JsonObject *jsonResult = new osrm._JsonObject()
         self._thisptr = new osrm.ResultT(jsonResult[0])
 
-    def json(self):
+    def json(self, to_timedelta=False):
         cdef:
             char* routes_k = "routes"
             char* distance_k = "distance"
@@ -252,7 +251,7 @@ cdef class RouteResult:
                     parsed_legs.append({
                         "steps": [],
                         "distance": leg.values[distance_k].get[osrm._Number]().value,
-                        "duration": leg.values[duration_k].get[osrm._Number]().value,
+                        "duration": leg.values[duration_k].get[osrm._Number]().value if not to_timedelta else dt.timedelta(seconds=leg.values[duration_k].get[osrm._Number]().value),
                         "summary": leg.values[summary_k].get[osrm._String]().value.decode("UTF-8"),
                         "annotation": _annotation
                     })
@@ -260,7 +259,7 @@ cdef class RouteResult:
 
                 parsed_routes.append({
                     "distance": route.values[distance_k].get[osrm._Number]().value,
-                    "duration": route.values[duration_k].get[osrm._Number]().value,
+                    "duration": route.values[duration_k].get[osrm._Number]().value if not to_timedelta else dt.timedelta(seconds=route.values[duration_k].get[osrm._Number]().value),
                     "legs": parsed_legs,
                     "geometry": route.values[geometry_k].get[osrm._String]().value.decode("UTF-8"),
                     "weight_name": route.values[weight_name_k].get[osrm._String]().value.decode("UTF-8"),
@@ -367,7 +366,7 @@ cdef class TableResult:
         cdef osrm._JsonObject *jsonResult = new osrm._JsonObject()
         self._thisptr = new osrm.ResultT(jsonResult[0])
 
-    def json(self):
+    def json(self, to_timedelta=False):
         cdef:
             char* sources_k = "sources"
             char* destinations_k = "destinations"
@@ -437,7 +436,7 @@ cdef class TableResult:
                     parsed_durations.append([])
                     data = durations.values.at(ii).get[osrm._Array]()
                     for jj in range(data.values.size()):
-                        parsed_durations[-1].append(data.values.at(jj).get[osrm._Number]().value)
+                        parsed_durations[-1].append(data.values.at(jj).get[osrm._Number]().value if not to_timedelta else dt.timedelta(seconds=data.values.at(jj).get[osrm._Number]().value))
                 result['durations'] = parsed_durations
 
             if  json_result.values.find(distances_k) != json_result.values.end():
