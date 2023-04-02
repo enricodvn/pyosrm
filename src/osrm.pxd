@@ -109,15 +109,15 @@ cdef extern from "engine/api/base_parameters.hpp" namespace "osrm::engine::api":
         SnappingType snapping 
 
 cdef extern from "route_parameters.hpp" namespace "osrm::engine::api":
-    cdef enum AnnotationsType "osrm::engine::api::RouteParameters::AnnotationsType":
-            NoAnnotation "osrm::engine::api::RouteParameters::AnnotationsType::None"
-            Duration "osrm::engine::api::RouteParameters::AnnotationsType::Duration"
-            Nodes "osrm::engine::api::RouteParameters::AnnotationsType::Nodes"
-            Distance "osrm::engine::api::RouteParameters::AnnotationsType::Distance"
-            Weight "osrm::engine::api::RouteParameters::AnnotationsType::Weight"
-            Datasources "osrm::engine::api::RouteParameters::AnnotationsType::Datasources"
-            Speed "osrm::engine::api::RouteParameters::AnnotationsType::Speed"
-            All "osrm::engine::api::RouteParameters::AnnotationsType::All"
+    cpdef enum RAnnotationsType "osrm::engine::api::RouteParameters::AnnotationsType":
+            RNoAnnotation "osrm::engine::api::RouteParameters::AnnotationsType::None"
+            RDuration "osrm::engine::api::RouteParameters::AnnotationsType::Duration"
+            RNodes "osrm::engine::api::RouteParameters::AnnotationsType::Nodes"
+            RDistance "osrm::engine::api::RouteParameters::AnnotationsType::Distance"
+            RWeight "osrm::engine::api::RouteParameters::AnnotationsType::Weight"
+            RDatasources "osrm::engine::api::RouteParameters::AnnotationsType::Datasources"
+            RSpeed "osrm::engine::api::RouteParameters::AnnotationsType::Speed"
+            RAll "osrm::engine::api::RouteParameters::AnnotationsType::All"
 
     cdef enum GeometriesType "osrm::engine::api::RouteParameters::GeometriesType":
         Polyline "osrm::engine::api::RouteParameters::GeometriesType::Polyline"
@@ -133,7 +133,7 @@ cdef extern from "route_parameters.hpp" namespace "osrm::engine::api":
         bool steps
         bool alternatives
         bool annotations
-        AnnotationsType annotations_type
+        RAnnotationsType annotations_type
         GeometriesType geometries
         OverviewType overview
 
@@ -142,24 +142,23 @@ cdef extern from "nearest_parameters.hpp" namespace "osrm::engine::api":
         unsigned int number_of_results
 
 cdef extern from "table_parameters.hpp" namespace "osrm::engine::api":
-    cdef enum TableAnnotationsType "osrm::engine::api::TableParameters::AnnotationsType":
-            TableNoAnnotation "osrm::engine::api::TableParameters::AnnotationsType::None"
-            TableDuration "osrm::engine::api::TableParameters::AnnotationsType::Duration"
-            TableDistance "osrm::engine::api::TableParameters::AnnotationsType::Distance"
-            TableAll "osrm::engine::api::TableParameters::AnnotationsType::All"
+    cpdef enum TAnnotationsType "osrm::engine::api::TableParameters::AnnotationsType":
+            TNoAnnotation "osrm::engine::api::TableParameters::AnnotationsType::None"
+            TDuration "osrm::engine::api::TableParameters::AnnotationsType::Duration"
+            TDistance "osrm::engine::api::TableParameters::AnnotationsType::Distance"
+            TAll "osrm::engine::api::TableParameters::AnnotationsType::All"
 
     cdef enum FallbackCoordinateType "osrm::engine::api::TableParameters::FallbackCoordinateType":
-        Input "osrm::engine::api::FallbackCoordinateType::FallbackCoordinateType::Input"
-        Snapped "osrm::engine::api::FallbackCoordinateType::FallbackCoordinateType::Snapped"  
+        Input "osrm::engine::api::TableParameters::FallbackCoordinateType::Input"
+        Snapped "osrm::engine::api::TableParameters::FallbackCoordinateType::Snapped"
 
-    cdef cppclass TableParameters(BaseParameters): 
+    cdef cppclass TableParameters(BaseParameters):    
         vector[size_t] sources
         vector[size_t] destinations
         double fallback_speed
         FallbackCoordinateType fallback_coordinate_type
-        TableAnnotationsType annotations
+        TAnnotationsType annotations
         double scale_factor
-
 
 cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
     cdef cppclass Value:
@@ -185,4 +184,4 @@ cdef extern from "osrm.hpp" namespace "osrm":
         OSRM(EngineConfig &config) except +
         Status Route(RouteParameters &parameters, ResultT &result)
         Status Nearest(NearestParameters &parameters, ResultT &result)
-        Status Table(TableParameters& parameters, ResultT& result)
+        Status Table(TableParameters &parameters, ResultT &result)
