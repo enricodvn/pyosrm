@@ -89,7 +89,7 @@ ext = cythonize(
             library_dirs=library_dirs,
             libraries=libraries,
             language='c++',
-            extra_compile_args=["-std=c++14"],
+            extra_compile_args=["-std=c++17"],
             extra_link_args=extra_link_args
         )
     ],
@@ -108,5 +108,8 @@ setup(
     author='Enrico Davini, Luca Di Gaspero',
     url='https://github.com/liuq/pyosrm',
     zip_safe=False,
-    ext_modules=ext
+    ext_modules=ext,
+    extra_require = {
+        'build': ['cython']
+    }
 )

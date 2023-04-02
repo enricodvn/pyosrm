@@ -137,7 +137,9 @@ cdef extern from "route_parameters.hpp" namespace "osrm::engine::api":
         GeometriesType geometries
         OverviewType overview
 
-    
+cdef extern from "nearest_parameters.hpp" namespace "osrm::engine::api": 
+    cdef cppclass NearestParameters(BaseParameters):    
+        unsigned int number_of_results
 
 cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
     cdef cppclass Value:
@@ -162,3 +164,4 @@ cdef extern from "osrm.hpp" namespace "osrm":
         OSRM() except +
         OSRM(EngineConfig &config) except +
         Status Route(RouteParameters &parameters, ResultT &result)
+        Status Nearest(NearestParameters &parameters, ResultT &result)
