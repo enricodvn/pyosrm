@@ -82,13 +82,9 @@ First things first, osrm-backend needs to be installed.
 
 To install osrm-backend, follow the instructions above.
 
-Clone the repository and make sure Cython is installed. Then proceed to install locally via pip:
+Clone the repository. Then proceed to install locally via pip:
 ```
 pip install .
-```
-Or, if you want to build inline:
-```
-python setup.py build_ext --inplace
 ```
 
 ## Usage
@@ -111,6 +107,15 @@ To use the Route API, you just need to pass a list of coordinate pairs in format
 from pyosrm import PyOSRM, Status
 router = PyOSRM("tests/data/ch/monaco-latest.osrm", algorithm='CH')
 result = router.route([[7.419758, 43.731142], [7.419505, 43.736825]])
+if result.status == Status.Ok:
+    print(result.json())
+```
+### Nearest
+To use the Nearest API, you need to pass a single coordinate in format [lon, lat]. 
+```
+from pyosrm import PyOSRM, Status
+router = PyOSRM("tests/data/ch/monaco-latest.osrm", algorithm='CH')
+result = router.nearest([7.4083429, 3.7378501])
 if result.status == Status.Ok:
     print(result.json())
 ```

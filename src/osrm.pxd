@@ -141,6 +141,26 @@ cdef extern from "nearest_parameters.hpp" namespace "osrm::engine::api":
     cdef cppclass NearestParameters(BaseParameters):    
         unsigned int number_of_results
 
+cdef extern from "table_parameters.hpp" namespace "osrm::engine::api":
+    cdef enum TableAnnotationsType "osrm::engine::api::TableParameters::AnnotationsType":
+            TableNoAnnotation "osrm::engine::api::TableParameters::AnnotationsType::None"
+            TableDuration "osrm::engine::api::TableParameters::AnnotationsType::Duration"
+            TableDistance "osrm::engine::api::TableParameters::AnnotationsType::Distance"
+            TableAll "osrm::engine::api::TableParameters::AnnotationsType::All"
+
+    cdef enum FallbackCoordinateType "osrm::engine::api::TableParameters::FallbackCoordinateType":
+        Input "osrm::engine::api::FallbackCoordinateType::FallbackCoordinateType::Input"
+        Snapped "osrm::engine::api::FallbackCoordinateType::FallbackCoordinateType::Snapped"  
+
+    cdef cppclass TableParameters(BaseParameters): 
+        vector[size_t] sources
+        vector[size_t] destinations
+        double fallback_speed
+        FallbackCoordinateType fallback_coordinate_type
+        TableAnnotationsType annotations
+        double scale_factor
+
+
 cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
     cdef cppclass Value:
         T get[T]()
@@ -165,3 +185,4 @@ cdef extern from "osrm.hpp" namespace "osrm":
         OSRM(EngineConfig &config) except +
         Status Route(RouteParameters &parameters, ResultT &result)
         Status Nearest(NearestParameters &parameters, ResultT &result)
+        Status Table(TableParameters& parameters, ResultT& result)
