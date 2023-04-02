@@ -108,8 +108,5 @@ setup(
     author='Enrico Davini, Luca Di Gaspero',
     url='https://github.com/liuq/pyosrm',
     zip_safe=False,
-    ext_modules=ext,
-    extra_require = {
-        'build': ['cython']
-    }
+    ext_modules=ext
 )

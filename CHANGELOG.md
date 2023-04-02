@@ -31,3 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Status enum
 - Working examples on readme and tests
 - test data unprocessed (raw) and preprocessed for CH and MLD
+
+## [0.1.0] - 2023-04-02
+### Added
+- Nearest and Table methods
+- Updated test files to osrm version 5.27.1
