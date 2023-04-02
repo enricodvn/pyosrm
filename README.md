@@ -121,11 +121,11 @@ if result.status == Status.Ok:
 ```
 
 ### Table
-To use the Table API, you need to pass a list of coordinates in format [lon, lat]. 
+To use the Table API, you need to pass a list of coordinates in format [lon, lat]. Optionaly `source_indexes` and `destination_indexes` can be provided so to limit the sources to those indexes passed. `annotations` can be used to also report distances and not only `durations`.
 ```
 from pyosrm import PyOSRM, Status
 router = PyOSRM("tests/data/ch/monaco-latest.osrm", algorithm='CH')
-result = router.table([(7.4083429, 3.7378501), (7.4176532280313318, 43.73133194618227)])
+result = router.table([(7.4083429, 3.7378501), (7.4176532280313318, 43.73133194618227), (7.418046070817755, 43.7257042928162)], source_indexes=[0, 1])
 if result.status == Status.Ok:
     print(result.json())
 ```
