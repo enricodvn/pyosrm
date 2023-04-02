@@ -19,7 +19,7 @@ cdef class PyOSRM:
             store_config = new osrm.StorageConfig(path_c)
             engine_config.storage_config = store_config[0]
         elif not use_shared_memory:
-            raise ValueError("You need either a valid path or use_shared_memory True")
+            raise ValueError(f"{path} is invalid: you need either a valid path or use_shared_memory True")
         engine_config.use_shared_memory = use_shared_memory
         if algorithm=="CH":
             engine_config.algorithm = osrm.Algorithm.CH
