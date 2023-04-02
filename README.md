@@ -119,3 +119,13 @@ result = router.nearest([7.4083429, 3.7378501])
 if result.status == Status.Ok:
     print(result.json())
 ```
+
+### Table
+To use the Table API, you need to pass a list of coordinates in format [lon, lat]. 
+```
+from pyosrm import PyOSRM, Status
+router = PyOSRM("tests/data/ch/monaco-latest.osrm", algorithm='CH')
+result = router.table([(7.4083429, 3.7378501), (7.4176532280313318, 43.73133194618227)])
+if result.status == Status.Ok:
+    print(result.json())
+```
