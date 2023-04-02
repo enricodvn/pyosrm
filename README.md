@@ -97,9 +97,9 @@ If you installed pyosrm using pip, you don't need to have osrm-backend installed
 To create a PyOSRM object, you need to pass the path to the pre-processed data, and the algorithm (default 'CH' or 'MLD').
 ```
 import pyosrm
-router = posrm.PyOSRM("tests/data/ch/monaco-latest.osrm")
+router = pyosrm.PyOSRM("tests/data/ch/monaco-latest.osrm")
 ```
-For large datasets, it may be required [a lot of RAM](https://github.com/Project-OSRM/osrm-backend/wiki/Disk-and-Memory-Requirements) to run osrm. For this reason, if you have more than one python process instanciating a PyOSRM object, it is recommended to use shared memory instead.
+For large datasets, it may be required [a lot of RAM](https://github.com/Project-OSRM/osrm-backend/wiki/Disk-and-Memory-Requirements) to run osrm. For this reason, if you have more than one python process instantiating a PyOSRM object, it is recommended to use shared memory instead.
 ```
 import pyosrm
 router = posrm.PyOSRM(use_shared_memory=True)
