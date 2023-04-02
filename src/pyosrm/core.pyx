@@ -109,12 +109,22 @@ cdef class PyOSRM:
 
         return result
 
-    def table(self, route_coords, annotations=[]):
+    def table(self, route_coords, source_indexes=[], destination_indexes=[], annotations=[]):
         cdef:
              osrm.FloatLongitude* lon
              osrm.FloatLatitude* lat
              osrm.Coordinate* coords
              osrm.TableParameters *params = new osrm.TableParameters()
+
+        for s in source_indexes:
+            if s < 0 or s >= len(route_coords):
+                raise ValueError(f'Source index {s} out of bounds')
+            params[0].sources.push_back(s)
+
+        for d in destination_indexes:
+            if d < 0 or d >= len(route_coords):
+                raise ValueError(f'Destination index {d} out of bounds')
+            params[0].destinations.push_back(d)
 
         if annotations:
             if not isinstance(annotations, str) and isinstance(annotations, Iterable):
