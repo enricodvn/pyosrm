@@ -79,11 +79,12 @@ elif platform.system() == 'Linux':
     ]
     extra_link_args = ["-lrt"]
     for i, library in enumerate(libraries):
-        # Try static libraries first
+        # Try dynamic libraries first
+        found = False
         if find_library(library):
-            continue
+            print(find_library(library))
+            found = True
         else:
-            found = False
             for dir in library_dirs:
                 if os.path.isfile(os.path.join(dir, f'lib{library}.a')):
                     found = True
@@ -93,9 +94,10 @@ elif platform.system() == 'Linux':
                     libraries[i] = library
                     found = True
                     break
-            if found:
-                continue
-        raise SystemExit(f'Could not locate library {library}')
+        if found:
+            continue
+        else:
+            raise SystemExit(f'Could not locate library {library}')
 else:
     raise SystemExit(f'Platform {platform.system()} is currently unsupported')
 
