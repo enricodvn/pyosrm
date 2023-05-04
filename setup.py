@@ -16,23 +16,19 @@ if platform.system() == 'Darwin':
             '/opt/homebrew/include/osrm',
             '/opt/homebrew/include/boost',
             '/usr/local/include/boost',
-            '/usr/include/boost'
         ]
         library_dirs = [
             '/opt/homebrew/lib',
             '/usr/local/lib',
-            '/usr/lib'
         ]       
     else:        
         include_dirs = [
             '/usr/local/include/osrm',
             '/usr/local/include/boost',
-            '/usr/include/boost'
         ]
         library_dirs = [
             '/usr/local/lib',
             '/usr/lib',
-            '/usr/lib/x86_64-linux-gnu'
         ]
 
     libraries = [
@@ -82,6 +78,24 @@ elif platform.system() == 'Linux':
         "boost_thread",
     ]
     extra_link_args = ["-lrt"]
+    for i, library in enumerate(libraries):
+        # Try dynamic libraries first
+        if find_library(library):
+            continue
+        else:
+            found = False
+            for dir in library_dirs:
+                if os.path.isfile(os.path.join(dir, f'lib{library}.a')):
+                    found = True
+                    break
+                if library.startswith('boost') and os.path.isfile(os.path.join(dir, f'lib{library}-mt.a')):
+                    library += '-mt'
+                    libraries[i] = library
+                    found = True
+                    break
+            if found:
+                continue
+        raise SystemExit(f'Could not locate library {library}')
 else:
     raise SystemExit(f'Platform {platform.system()} is currently unsupported')
 
