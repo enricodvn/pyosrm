@@ -15,19 +15,24 @@ if platform.system() == 'Darwin':
         include_dirs = [
             '/opt/homebrew/include/osrm',
             '/opt/homebrew/include/boost',
-            '/usr/local/include/boost'
+            '/usr/local/include/boost',
+            '/usr/include/boost'
         ]
         library_dirs = [
-            '/opt/homebrew/lib'
+            '/opt/homebrew/lib',
+            '/usr/local/lib',
+            '/usr/lib'
         ]       
     else:        
         include_dirs = [
             '/usr/local/include/osrm',
             '/usr/local/include/boost',
-            '/usr/local/include/boost'
+            '/usr/include/boost'
         ]
         library_dirs = [
-            '/usr/local/lib'
+            '/usr/local/lib',
+            '/usr/lib',
+            '/usr/lib/x86_64-linux-gnu'
         ]
 
     libraries = [
