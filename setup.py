@@ -76,8 +76,9 @@ elif platform.system() == 'Linux':
         "boost_filesystem",
         "boost_iostreams",
         "boost_thread",
+        'rt'
     ]
-    extra_link_args = ["-lrt"]
+    extra_link_args = ["-fPIC"]
     for i, library in enumerate(libraries):
         # Try dynamic libraries first
         found = False
@@ -110,7 +111,7 @@ ext = cythonize(
             library_dirs=library_dirs,
             libraries=libraries,
             language='c++',
-            extra_compile_args=["-std=c++17 -fPIC"],
+            extra_compile_args=["-std=c++17"],
             extra_link_args=extra_link_args
         )
     ],
