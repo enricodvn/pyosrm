@@ -78,7 +78,7 @@ elif platform.system() == 'Linux':
         "boost_thread",
         'rt'
     ]
-    extra_link_args = ["-fPIC", "-shared"]
+    extra_link_args = ["--no-as-needed"]
     for i, library in enumerate(libraries):
         # Try dynamic libraries first
         found = False
