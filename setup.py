@@ -80,20 +80,23 @@ elif platform.system() == 'Linux':
     ]
     extra_link_args = ["--no-as-needed"]
     for i, library in enumerate(libraries):
+        print(f"searching for {library}")
         # Try dynamic libraries first
         found = False
-        if find_library(library):
-            print(find_library(library))
+        if find_library(library):            
             found = True
+            print("found automatically")
         else:
             for dir in library_dirs:
                 if os.path.isfile(os.path.join(dir, f'lib{library}.a')):
                     found = True
+                    print(f"found in {dir}")
                     break
                 if library.startswith('boost') and os.path.isfile(os.path.join(dir, f'lib{library}-mt.a')):
                     library += '-mt'
                     libraries[i] = library
                     found = True
+                    print(f"found in {dir} as {library}-mt")
                     break
         if found:
             continue
