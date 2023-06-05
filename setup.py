@@ -78,7 +78,7 @@ elif platform.system() == 'Linux':
         "boost_iostreams",
         "boost_thread",
         'rt',
-        f'libboost_python{"".join(platform.python_version().split(".")[:2])}'
+        f'boost_python{"".join(platform.python_version().split(".")[:2])}'
     ]
     extra_link_args = ["-Wl,--no-undefined"]
     for i, library in enumerate(libraries):
