@@ -3,7 +3,7 @@ from Cython.Build import cythonize
 import platform
 from ctypes.util import find_library
 import os
-import platform
+import sys
 
 # read the contents of your README file
 from os import path
@@ -78,8 +78,8 @@ elif platform.system() == 'Linux':
         "boost_iostreams",
         "boost_thread",
         'rt',
-        f'boost_python{"".join(platform.python_version().split(".")[:2])}',
-        f'python{".".join(platform.python_version().split(".")[:2])}'
+        f'boost_python{"".join(map(str, sys.version_info[:2]))}',
+        f'python{".".join(map(str, sys.version_info[:2]))}'
     ]
     extra_link_args = ["-Wl,--no-undefined"]
     for i, library in enumerate(libraries):
