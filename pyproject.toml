@@ -1,0 +1,15 @@
+[tool.pyosrm]
+name = "pyosrm"
+version = "0.1.0"
+license = "MIT"
+description="Cython wrapper of osrm-backend to be used in Python"
+authors = [ "Luca Di Gaspero", "Enrico Davini"]
+url = "https://github.com/liuq/pyosrm"
+readme = "README.md"
+
+[build-system]
+requires = ["setuptools", "wheel", "Cython"]
+
+[tool.pyosrm.build]
+script = "build.py"
+generate-setup-file = false

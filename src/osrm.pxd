@@ -106,11 +106,59 @@ cdef extern from "engine/api/base_parameters.hpp" namespace "osrm::engine::api":
         optional[OutputFormatType] format
         bool generate_hints
         bool skip_waypoints
-        SnappingType snapping
+        SnappingType snapping 
 
-cdef extern from "route_parameters.hpp" namespace "osrm":
-    cdef cppclass RouteParameters(BaseParameters):
-        pass
+cdef extern from "route_parameters.hpp" namespace "osrm::engine::api":
+    cpdef enum RAnnotationsType "osrm::engine::api::RouteParameters::AnnotationsType":
+            RNoAnnotation "osrm::engine::api::RouteParameters::AnnotationsType::None"
+            RDuration "osrm::engine::api::RouteParameters::AnnotationsType::Duration"
+            RNodes "osrm::engine::api::RouteParameters::AnnotationsType::Nodes"
+            RDistance "osrm::engine::api::RouteParameters::AnnotationsType::Distance"
+            RWeight "osrm::engine::api::RouteParameters::AnnotationsType::Weight"
+            RDatasources "osrm::engine::api::RouteParameters::AnnotationsType::Datasources"
+            RSpeed "osrm::engine::api::RouteParameters::AnnotationsType::Speed"
+            RAll "osrm::engine::api::RouteParameters::AnnotationsType::All"
+
+    cdef enum GeometriesType "osrm::engine::api::RouteParameters::GeometriesType":
+        Polyline "osrm::engine::api::RouteParameters::GeometriesType::Polyline"
+        Polyline6 "osrm::engine::api::RouteParameters::GeometriesType::Polyline6"
+        GeoJSON "osrm::engine::api::RouteParameters::GeometriesType::GeoJSON"
+
+    cdef enum OverviewType "osrm::engine::api::RouteParameters::OverviewType":
+        Simplified "osrm::engine::api::RouteParameters::OverviewType::Simplified"
+        Full "osrm::engine::api::RouteParameters::OverviewType::Full"
+        NoOverview "osrm::engine::api::RouteParameters::OverviewType::False"    
+
+    cdef cppclass RouteParameters(BaseParameters):    
+        bool steps
+        bool alternatives
+        bool annotations
+        RAnnotationsType annotations_type
+        GeometriesType geometries
+        OverviewType overview
+
+cdef extern from "nearest_parameters.hpp" namespace "osrm::engine::api": 
+    cdef cppclass NearestParameters(BaseParameters):    
+        unsigned int number_of_results
+
+cdef extern from "table_parameters.hpp" namespace "osrm::engine::api":
+    cpdef enum TAnnotationsType "osrm::engine::api::TableParameters::AnnotationsType":
+            TNoAnnotation "osrm::engine::api::TableParameters::AnnotationsType::None"
+            TDuration "osrm::engine::api::TableParameters::AnnotationsType::Duration"
+            TDistance "osrm::engine::api::TableParameters::AnnotationsType::Distance"
+            TAll "osrm::engine::api::TableParameters::AnnotationsType::All"
+
+    cdef enum FallbackCoordinateType "osrm::engine::api::TableParameters::FallbackCoordinateType":
+        Input "osrm::engine::api::TableParameters::FallbackCoordinateType::Input"
+        Snapped "osrm::engine::api::TableParameters::FallbackCoordinateType::Snapped"
+
+    cdef cppclass TableParameters(BaseParameters):    
+        vector[size_t] sources
+        vector[size_t] destinations
+        double fallback_speed
+        FallbackCoordinateType fallback_coordinate_type
+        TAnnotationsType annotations
+        double scale_factor
 
 cdef extern from "util/json_container.hpp" namespace "osrm::util::json":
     cdef cppclass Value:
@@ -135,3 +183,5 @@ cdef extern from "osrm.hpp" namespace "osrm":
         OSRM() except +
         OSRM(EngineConfig &config) except +
         Status Route(RouteParameters &parameters, ResultT &result)
+        Status Nearest(NearestParameters &parameters, ResultT &result)
+        Status Table(TableParameters &parameters, ResultT &result)
